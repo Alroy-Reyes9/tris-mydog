@@ -325,10 +325,21 @@
             color: white;
             transition: transform 0.3s ease;
             cursor: pointer;
+            overflow: hidden;
+            position: relative;
         }
 
         .photo-placeholder:hover {
             transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .photo-placeholder img {
+            transition: transform 0.3s ease;
+        }
+
+        .photo-placeholder:hover img {
+            transform: scale(1.1);
         }
 
         /* Footer */
@@ -360,6 +371,13 @@
     </style>
 </head>
 <body>
+    <!-- Sound Control -->
+    <div style="position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1000;">
+        <button onclick="toggleSound()" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-size: 1rem;">
+            <span id="soundIcon">🔊</span> Sound
+        </button>
+    </div>
+
     <!-- Hero Section -->
     <div class="hero">
         <h1>Meet Tris!</h1>
@@ -461,14 +479,26 @@
     <!-- Photo Gallery -->
     <div class="section gallery-section">
         <h2 class="gallery-title">Tris's Photo Gallery</h2>
-        <p style="text-align: center; color: #667eea; margin-bottom: 2rem;">Tris's adorable photos would go here!</p>
+        <p style="text-align: center; color: #667eea; margin-bottom: 2rem;">Our beautiful dappled princess!</p>
         <div class="photo-grid">
-            <div class="photo-placeholder">Baby Tris</div>
-            <div class="photo-placeholder">Tris Playing</div>
-            <div class="photo-placeholder">Sleepy Tris</div>
-            <div class="photo-placeholder">Tris's Adventures</div>
-            <div class="photo-placeholder">Tris & Friends</div>
-            <div class="photo-placeholder">Happy Tris</div>
+            <div class="photo-placeholder" style="background: #f0f0f0; padding: 0; overflow: hidden;">
+                <img src="images/tris1.jpg" alt="Tris with her turquoise dinosaur toy" style="width: 100%; height: 200px; object-fit: cover;">
+            </div>
+            <div class="photo-placeholder" style="background: #f0f0f0; padding: 0; overflow: hidden;">
+                <img src="images/tris2.jpg" alt="Tris hiding under the covers" style="width: 100%; height: 200px; object-fit: cover;">
+            </div>
+            <div class="photo-placeholder" style="background: #f0f0f0; padding: 0; overflow: hidden;">
+                <img src="images/tris3.jpg" alt="Happy Tris with tongue out" style="width: 100%; height: 200px; object-fit: cover;">
+            </div>
+            <div class="photo-placeholder" style="background: #f0f0f0; padding: 0; overflow: hidden;">
+                <img src="images/tris4.jpg" alt="Tris licking in her paw print shirt" style="width: 100%; height: 200px; object-fit: cover;">
+            </div>
+            <div class="photo-placeholder" style="background: #f0f0f0; padding: 0; overflow: hidden;">
+                <img src="images/tris5.jpg" alt="Tris with her birthday pupcake" style="width: 100%; height: 200px; object-fit: cover;">
+            </div>
+            <div class="photo-placeholder" style="background: #f0f0f0; padding: 0; overflow: hidden;">
+                <img src="images/tris6.jpg" alt="Tris in purple floral outfit" style="width: 100%; height: 200px; object-fit: cover;">
+            </div>
         </div>
     </div>
 
@@ -479,6 +509,95 @@
     </div>
 
     <script>
+        // Sound effects setup
+        const sounds = {
+            bark: 'https://www.soundjay.com/misc/sounds/dog-barking-short-1.mp3',
+            woof: 'https://cdn.freesound.org/previews/316/316920_5123451-lq.mp3',
+            eating: 'https://cdn.freesound.org/previews/412/412068_5123451-lq.mp3',
+            panting: 'https://cdn.freesound.org/previews/415/415209_5123451-lq.mp3'
+        };
+
+        // Create audio elements
+        const audioElements = {};
+        let soundEnabled = true;
+
+        // Initialize sounds
+        function initSounds() {
+            // For now, we'll use browser's audio API to create sounds
+            audioElements.bark = new Audio();
+            audioElements.woof = new Audio();
+            audioElements.eating = new Audio();
+            
+            // Set up Web Audio API for generating sounds
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Create a simple bark sound
+            window.playBark = function() {
+                if (!soundEnabled) return;
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.2);
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+            };
+            
+            // Create a simple eating sound
+            window.playEating = function() {
+                if (!soundEnabled) return;
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            };
+            
+            // Create a whimper sound
+            window.playWhimper = function() {
+                if (!soundEnabled) return;
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.3);
+                
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            };
+        }
+
+        // Initialize sounds on first user interaction
+        document.addEventListener('click', function initAudio() {
+            initSounds();
+            document.removeEventListener('click', initAudio);
+        }, { once: true });
+
         // Calculate Tris's age
         function calculateAge() {
             const birthDate = new Date('2021-09-16');
@@ -535,18 +654,21 @@
             updateHappiness(10);
             const barks = ['Woof woof! 🦴', 'Yum yum! 😋', 'More treats please! 🐕', 'I love treats! ❤️'];
             showBark(barks[Math.floor(Math.random() * barks.length)]);
+            if (window.playEating) playEating();
         }
         
         function playFetch() {
             updateHappiness(15);
             const barks = ['Catch me if you can! 🏃', 'Ball! Ball! Ball! 🎾', 'This is so fun! 🎉', 'Again! Again! 🐕'];
             showBark(barks[Math.floor(Math.random() * barks.length)]);
+            if (window.playBark) playBark();
         }
         
         function bellyScratch() {
             updateHappiness(20);
             const barks = ['Ahhhh, that\'s the spot! 😊', 'Best scratches ever! 🥰', 'Don\'t stop! 🐕', 'I\'m in heaven! ☁️'];
             showBark(barks[Math.floor(Math.random() * barks.length)]);
+            // Happy panting sound would go here
         }
         
         // Random happiness decrease over time
@@ -555,9 +677,28 @@
                 updateHappiness(-5);
                 if (happiness < 30) {
                     showBark('I need attention! 🥺');
+                    if (window.playWhimper) playWhimper();
                 }
             }
         }, 10000);
+        // Toggle sound on/off
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+        }
+        
+        // Random bark when clicking on Tris
+        document.addEventListener('DOMContentLoaded', function() {
+            const dachshund = document.querySelector('.dachshund');
+            if (dachshund) {
+                dachshund.style.cursor = 'pointer';
+                dachshund.addEventListener('click', function() {
+                    if (window.playBark) playBark();
+                    showBark('Woof! 🐕');
+                    updateHappiness(5);
+                });
+            }
+        });
     </script>
 </body>
 </html>
