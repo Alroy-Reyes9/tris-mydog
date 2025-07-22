@@ -509,29 +509,43 @@
     </div>
 
     <script>
-        // Sound effects setup
+        // Sound effects setup with custom audio files
         const sounds = {
-            bark: 'https://www.soundjay.com/misc/sounds/dog-barking-short-1.mp3',
-            woof: 'https://cdn.freesound.org/previews/316/316920_5123451-lq.mp3',
-            eating: 'https://cdn.freesound.org/previews/412/412068_5123451-lq.mp3',
-            panting: 'https://cdn.freesound.org/previews/415/415209_5123451-lq.mp3'
+            bark: new Audio('sounds/bark.mp3'),
+            whine: new Audio('sounds/whine.mp3'),
+            eating: new Audio('sounds/eating.mp3'),
+            happy: new Audio('sounds/happy.mp3'),
+            snoring: new Audio('sounds/snoring.mp3')
         };
 
-        // Create audio elements
-        const audioElements = {};
+        // Set volume for all sounds
+        Object.values(sounds).forEach(sound => {
+            sound.volume = 0.5; // 50% volume
+        });
+
         let soundEnabled = true;
 
-        // Initialize sounds
-        function initSounds() {
-            // For now, we'll use browser's audio API to create sounds
-            audioElements.bark = new Audio();
-            audioElements.woof = new Audio();
-            audioElements.eating = new Audio();
+        // Play sound function
+        function playSound(soundName) {
+            if (!soundEnabled) return;
             
-            // Set up Web Audio API for generating sounds
+            if (sounds[soundName]) {
+                sounds[soundName].currentTime = 0; // Reset to start
+                sounds[soundName].play().catch(e => {
+                    console.log('Sound play failed:', e);
+                    // Fallback to Web Audio API sounds if file not found
+                    if (soundName === 'bark' && window.playBark) window.playBark();
+                    if (soundName === 'eating' && window.playEating) window.playEating();
+                    if (soundName === 'whine' && window.playWhimper) window.playWhimper();
+                });
+            }
+        }
+
+        // Initialize Web Audio API sounds as fallback
+        function initSounds() {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             
-            // Create a simple bark sound
+            // Fallback bark sound
             window.playBark = function() {
                 if (!soundEnabled) return;
                 
@@ -551,7 +565,7 @@
                 oscillator.stop(audioContext.currentTime + 0.2);
             };
             
-            // Create a simple eating sound
+            // Fallback eating sound
             window.playEating = function() {
                 if (!soundEnabled) return;
                 
@@ -571,7 +585,7 @@
                 oscillator.stop(audioContext.currentTime + 0.5);
             };
             
-            // Create a whimper sound
+            // Fallback whimper sound
             window.playWhimper = function() {
                 if (!soundEnabled) return;
                 
@@ -595,8 +609,25 @@
         // Initialize sounds on first user interaction
         document.addEventListener('click', function initAudio() {
             initSounds();
+            // Pre-load all sounds
+            Object.values(sounds).forEach(sound => {
+                sound.load();
+            });
             document.removeEventListener('click', initAudio);
         }, { once: true });
+
+        // Background music (optional)
+        const bgMusic = new Audio('sounds/background-music.mp3');
+        bgMusic.loop = true;
+        bgMusic.volume = 0.3;
+
+        function toggleBackgroundMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+            } else {
+                bgMusic.pause();
+            }
+        }
 
         // Calculate Tris's age
         function calculateAge() {
@@ -654,21 +685,21 @@
             updateHappiness(10);
             const barks = ['Woof woof! 🦴', 'Yum yum! 😋', 'More treats please! 🐕', 'I love treats! ❤️'];
             showBark(barks[Math.floor(Math.random() * barks.length)]);
-            if (window.playEating) playEating();
+            playSound('eating');
         }
         
         function playFetch() {
             updateHappiness(15);
             const barks = ['Catch me if you can! 🏃', 'Ball! Ball! Ball! 🎾', 'This is so fun! 🎉', 'Again! Again! 🐕'];
             showBark(barks[Math.floor(Math.random() * barks.length)]);
-            if (window.playBark) playBark();
+            playSound('bark');
         }
         
         function bellyScratch() {
             updateHappiness(20);
             const barks = ['Ahhhh, that\'s the spot! 😊', 'Best scratches ever! 🥰', 'Don\'t stop! 🐕', 'I\'m in heaven! ☁️'];
             showBark(barks[Math.floor(Math.random() * barks.length)]);
-            // Happy panting sound would go here
+            playSound('happy');
         }
         
         // Random happiness decrease over time
@@ -677,7 +708,7 @@
                 updateHappiness(-5);
                 if (happiness < 30) {
                     showBark('I need attention! 🥺');
-                    if (window.playWhimper) playWhimper();
+                    playSound('whine');
                 }
             }
         }, 10000);
@@ -693,11 +724,27 @@
             if (dachshund) {
                 dachshund.style.cursor = 'pointer';
                 dachshund.addEventListener('click', function() {
-                    if (window.playBark) playBark();
+                    playSound('bark');
                     showBark('Woof! 🐕');
                     updateHappiness(5);
                 });
             }
+            
+            // Add snoring when idle for too long
+            let idleTimer;
+            function resetIdleTimer() {
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(() => {
+                    if (happiness > 70) {
+                        playSound('snoring');
+                        showBark('Zzz... 😴');
+                    }
+                }, 30000); // 30 seconds of idle
+            }
+            
+            document.addEventListener('mousemove', resetIdleTimer);
+            document.addEventListener('click', resetIdleTimer);
+            resetIdleTimer();
         });
     </script>
 </body>
