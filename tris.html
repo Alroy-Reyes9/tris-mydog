@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tris - The Magnificent Dachshund</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background: rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Animated Dachshund */
+        .dachshund-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: 2rem auto;
+        }
+
+        .dachshund {
+            position: absolute;
+            width: 250px;
+            height: 100px;
+            animation: walk 3s ease-in-out infinite;
+        }
+
+        @keyframes walk {
+            0%, 100% { transform: translateX(0) scaleX(1); }
+            50% { transform: translateX(50px) scaleX(1); }
+            51% { transform: translateX(50px) scaleX(-1); }
+        }
+
+        .body {
+            background: #8B4513;
+            width: 180px;
+            height: 60px;
+            border-radius: 30px;
+            position: absolute;
+            top: 40px;
+            left: 35px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .head {
+            background: #8B4513;
+            width: 70px;
+            height: 50px;
+            border-radius: 35px 35px 25px 25px;
+            position: absolute;
+            top: 35px;
+            left: 180px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .ear {
+            background: #654321;
+            width: 30px;
+            height: 40px;
+            border-radius: 15px 15px 30px 30px;
+            position: absolute;
+            top: 40px;
+        }
+
+        .ear-left {
+            left: 175px;
+            transform: rotate(-20deg);
+        }
+
+        .ear-right {
+            left: 210px;
+            transform: rotate(20deg);
+        }
+
+        .eye {
+            background: white;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            position: absolute;
+            top: 50px;
+        }
+
+        .eye-left {
+            left: 200px;
+        }
+
+        .eye-right {
+            left: 225px;
+        }
+
+        .pupil {
+            background: black;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            animation: look 4s ease-in-out infinite;
+        }
+
+        @keyframes look {
+            0%, 20%, 80%, 100% { transform: translate(0, 0); }
+            40% { transform: translate(2px, 0); }
+            60% { transform: translate(-2px, 0); }
+        }
+
+        .nose {
+            background: black;
+            width: 10px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            top: 65px;
+            left: 235px;
+        }
+
+        .leg {
+            background: #8B4513;
+            width: 15px;
+            height: 30px;
+            border-radius: 0 0 10px 10px;
+            position: absolute;
+            top: 85px;
+            animation: move-leg 0.5s ease-in-out infinite alternate;
+        }
+
+        .leg1 { left: 45px; animation-delay: 0s; }
+        .leg2 { left: 70px; animation-delay: 0.1s; }
+        .leg3 { left: 160px; animation-delay: 0.2s; }
+        .leg4 { left: 185px; animation-delay: 0.3s; }
+
+        @keyframes move-leg {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+
+        .tail {
+            background: #8B4513;
+            width: 40px;
+            height: 20px;
+            border-radius: 20px;
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            transform-origin: right center;
+            animation: wag 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes wag {
+            from { transform: rotate(-10deg); }
+            to { transform: rotate(10deg); }
+        }
+
+        /* Content Sections */
+        .section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .facts-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin: 2rem auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .facts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .fact-card {
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .fact-card:hover {
+            transform: scale(1.05);
+        }
+
+        .fact-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .fact-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .fact-text {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Interactive Game Section */
+        .game-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin: 2rem auto;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            color: #764ba2;
+            margin-bottom: 2rem;
+        }
+
+        .treat-button {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+        }
+
+        .treat-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .treat-counter {
+            font-size: 2rem;
+            color: #667eea;
+            margin: 1rem 0;
+        }
+
+        .bark-text {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            opacity: 0;
+            animation: fade-in-out 2s ease-in-out;
+        }
+
+        @keyframes fade-in-out {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Photo Gallery */
+        .gallery-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin: 2rem auto;
+            padding: 3rem;
+        }
+
+        .gallery-title {
+            font-size: 2.5rem;
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .photo-placeholder {
+            background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
+            height: 200px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .photo-placeholder:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .heart {
+            color: #ff6b6b;
+            font-size: 1.5rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .subtitle { font-size: 1.2rem; }
+            .dachshund-container { transform: scale(0.8); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Meet Tris!</h1>
+        <p class="subtitle">Long Body, Short Legs, Infinite Love</p>
+        <p style="color: #ffd700; font-size: 1.2rem; margin-top: 1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+            Born September 16, 2021 • <span id="age"></span> old
+        </p>
+        
+        <!-- Animated Dachshund -->
+        <div class="dachshund-container">
+            <div class="dachshund">
+                <div class="tail"></div>
+                <div class="body"></div>
+                <div class="head"></div>
+                <div class="ear ear-left"></div>
+                <div class="ear ear-right"></div>
+                <div class="eye eye-left">
+                    <div class="pupil"></div>
+                </div>
+                <div class="eye eye-right">
+                    <div class="pupil"></div>
+                </div>
+                <div class="nose"></div>
+                <div class="leg leg1"></div>
+                <div class="leg leg2"></div>
+                <div class="leg leg3"></div>
+                <div class="leg leg4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Tris Section -->
+    <div class="section" style="background: rgba(255, 255, 255, 0.95); border-radius: 20px; margin: 2rem auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <h2 style="text-align: center; font-size: 2.5rem; color: #764ba2; margin-bottom: 2rem;">All About Tris</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; align-items: center;">
+            <div style="text-align: center;">
+                <div style="background: linear-gradient(135deg, #ff6b6b, #ffd93d); width: 200px; height: 200px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 4rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2);">
+                    🐕
+                </div>
+                <h3 style="color: #667eea; font-size: 1.8rem;">Princess Tris</h3>
+            </div>
+            <div style="padding: 2rem;">
+                <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; border-radius: 15px; margin-bottom: 1rem;">
+                    <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem;">🎂 Birthday</h4>
+                    <p style="font-size: 1.1rem;">September 16, 2021</p>
+                </div>
+                <div style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; padding: 1.5rem; border-radius: 15px; margin-bottom: 1rem;">
+                    <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem;">⭐ Zodiac Sign</h4>
+                    <p style="font-size: 1.1rem;">Virgo - Loyal, hardworking, and analytical!</p>
+                </div>
+                <div style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; padding: 1.5rem; border-radius: 15px;">
+                    <h4 style="font-size: 1.3rem; margin-bottom: 0.5rem;">🎉 Fun Fact</h4>
+                    <p style="font-size: 1.1rem;">Tris has been bringing joy and laughter for <span id="dayCount"></span> days!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fun Facts Section -->
+    <div class="section facts-section">
+        <h2 style="text-align: center; font-size: 2.5rem; color: #764ba2; margin-bottom: 2rem;">Amazing Dachshund Facts</h2>
+        <div class="facts-grid">
+            <div class="fact-card">
+                <div class="fact-icon">🌭</div>
+                <h3 class="fact-title">Hot Dog Origins</h3>
+                <p class="fact-text">Originally bred in Germany over 300 years ago to hunt badgers in their burrows!</p>
+            </div>
+            <div class="fact-card">
+                <div class="fact-icon">🏃</div>
+                <h3 class="fact-title">Speedy Sausages</h3>
+                <p class="fact-text">Despite their short legs, they can run up to 15-20 mph!</p>
+            </div>
+            <div class="fact-card">
+                <div class="fact-icon">🧠</div>
+                <h3 class="fact-title">Big Brain Energy</h3>
+                <p class="fact-text">Ranked in the top 50 for dog intelligence - clever and independent thinkers!</p>
+            </div>
+            <div class="fact-card">
+                <div class="fact-icon">👑</div>
+                <h3 class="fact-title">Royal Favorites</h3>
+                <p class="fact-text">Queen Victoria loved them so much, she helped popularize the breed!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Game -->
+    <div class="section game-section">
+        <h2 class="game-title">Play with Tris!</h2>
+        <p style="color: #667eea; margin-bottom: 2rem;">Click the buttons to interact with Tris!</p>
+        
+        <button class="treat-button" onclick="giveTreat()">🦴 Give Treat</button>
+        <button class="treat-button" onclick="playFetch()">🎾 Play Fetch</button>
+        <button class="treat-button" onclick="bellyScratch()">✋ Belly Scratch</button>
+        
+        <div class="treat-counter" id="happiness">Tris's Happiness Level: <span id="happinessScore">50</span>%</div>
+        <div class="bark-text" id="barkText"></div>
+    </div>
+
+    <!-- Photo Gallery -->
+    <div class="section gallery-section">
+        <h2 class="gallery-title">Tris's Photo Gallery</h2>
+        <p style="text-align: center; color: #667eea; margin-bottom: 2rem;">Tris's adorable photos would go here!</p>
+        <div class="photo-grid">
+            <div class="photo-placeholder">Baby Tris</div>
+            <div class="photo-placeholder">Tris Playing</div>
+            <div class="photo-placeholder">Sleepy Tris</div>
+            <div class="photo-placeholder">Tris's Adventures</div>
+            <div class="photo-placeholder">Tris & Friends</div>
+            <div class="photo-placeholder">Happy Tris</div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Made with <span class="heart">❤</span> for Tris</p>
+        <p style="margin-top: 1rem; opacity: 0.8;">The best dachshund in the world!</p>
+    </div>
+
+    <script>
+        // Calculate Tris's age
+        function calculateAge() {
+            const birthDate = new Date('2021-09-16');
+            const today = new Date();
+            
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            
+            if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
+                years--;
+                months += 12;
+            }
+            
+            if (today.getDate() < birthDate.getDate()) {
+                months--;
+            }
+            
+            // Calculate days
+            const daysDiff = Math.floor((today - birthDate) / (1000 * 60 * 60 * 24));
+            
+            document.getElementById('age').textContent = `${years} years and ${months} months`;
+            document.getElementById('dayCount').textContent = daysDiff.toLocaleString();
+        }
+        
+        calculateAge();
+        
+        let happiness = 50;
+        
+        function updateHappiness(change) {
+            happiness = Math.max(0, Math.min(100, happiness + change));
+            document.getElementById('happinessScore').textContent = happiness;
+            
+            // Change color based on happiness
+            const happinessElement = document.getElementById('happiness');
+            if (happiness >= 80) {
+                happinessElement.style.color = '#4CAF50';
+            } else if (happiness >= 50) {
+                happinessElement.style.color = '#667eea';
+            } else {
+                happinessElement.style.color = '#ff6b6b';
+            }
+        }
+        
+        function showBark(text) {
+            const barkText = document.getElementById('barkText');
+            barkText.textContent = text;
+            barkText.style.animation = 'none';
+            setTimeout(() => {
+                barkText.style.animation = 'fade-in-out 2s ease-in-out';
+            }, 10);
+        }
+        
+        function giveTreat() {
+            updateHappiness(10);
+            const barks = ['Woof woof! 🦴', 'Yum yum! 😋', 'More treats please! 🐕', 'I love treats! ❤️'];
+            showBark(barks[Math.floor(Math.random() * barks.length)]);
+        }
+        
+        function playFetch() {
+            updateHappiness(15);
+            const barks = ['Catch me if you can! 🏃', 'Ball! Ball! Ball! 🎾', 'This is so fun! 🎉', 'Again! Again! 🐕'];
+            showBark(barks[Math.floor(Math.random() * barks.length)]);
+        }
+        
+        function bellyScratch() {
+            updateHappiness(20);
+            const barks = ['Ahhhh, that\'s the spot! 😊', 'Best scratches ever! 🥰', 'Don\'t stop! 🐕', 'I\'m in heaven! ☁️'];
+            showBark(barks[Math.floor(Math.random() * barks.length)]);
+        }
+        
+        // Random happiness decrease over time
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                updateHappiness(-5);
+                if (happiness < 30) {
+                    showBark('I need attention! 🥺');
+                }
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
